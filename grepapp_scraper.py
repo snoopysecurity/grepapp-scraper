@@ -1,5 +1,6 @@
 import click
 import requests
+import csv
 
 SEARCH_URL = 'https://grep.app/api/search?q={}&{}&page={}'
 
@@ -15,7 +16,7 @@ def fetch_results(term, languages, exclude, max_pages, show_snippet):
 
     while page == 1 or (results and (not max_pages or page <= max_pages)):
         page_url = SEARCH_URL.format(term, lang_filters, page)
-        print(f"Fetching: {page_url}")
+        # print(f"Fetching: {page_url}")
         response = requests.get(page_url, headers=HEADERS)
 
         try:
@@ -49,13 +50,22 @@ def fetch_results(term, languages, exclude, max_pages, show_snippet):
 
     return results
 
+def save_to_csv(results, filename="results.csv"):
+    """Save the search results to a CSV file."""
+    with open(filename, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=["repo", "path", "snippet"])
+        writer.writeheader()
+        writer.writerows(results)
+    click.echo(f"Results saved to {filename}")
+
 @click.command()
 @click.option('--search-term', required=True, type=str, help='Search term to match')
 @click.option('--lang', required=True, type=str, help='Filter results by language (comma-separated, e.g., Python,Java)')
 @click.option('--exclude', default='', type=str, help='Exclude results by keywords (comma-separated)')
 @click.option('--max', default=4, type=int, help='Maximum pages to fetch results from')
 @click.option('--show-snippet', is_flag=True, help='Show code snippets in output')
-def scrape(search_term, lang, exclude, max, show_snippet):
+@click.option('--csv', is_flag=True, help='Save results to CSV file')
+def scrape(search_term, lang, exclude, max, show_snippet, csv):
     results = fetch_results(search_term, lang, exclude, max, show_snippet)
     click.echo(f'Found {len(results)} results.')
 
@@ -66,6 +76,9 @@ def scrape(search_term, lang, exclude, max, show_snippet):
             click.echo("Code Snippet:")
             click.echo(res["snippet"])
         click.echo("-" * 40)
+
+    if csv:
+        save_to_csv(results)
 
 if __name__ == '__main__':
     scrape()

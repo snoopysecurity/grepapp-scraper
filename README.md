@@ -56,9 +56,13 @@ Search with the term encryption, exclude results containing test, and show code 
 python grepapp_scraper.py --search-term "encryption" --lang "Python,JavaScript" --max 3 --show-snippet --exclude "test"
 ```
 
+If you want to both display results and save them to a CSV:
 ```
-python grepapp_scraper.py --search-term "encryption" --lang "Python,JavaScript" --max 3 --regex
+python3 run.py --search-term "encryption" --lang "Python,JavaScript" --max 3 --csv
+
 ```
+
+
 
 ##  Output
 
