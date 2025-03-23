@@ -68,4 +68,4 @@ python3 run.py --search-term "encryption" --lang "Python,JavaScript" --max 3 --c
 
 By default, the script will print the repository URLs found in the search. If --show-snippet is enabled, it will also display a code snippet from the results.
 
-Repositories are also saved to a file (repositories.txt) if the `--get-only-repos` flag is set.
+Repositories can be saved in csv format with `--csv`
